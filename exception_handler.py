@@ -2,7 +2,7 @@ import logging
 import os
 from collections import defaultdict
 from functools import wraps
-from typing import Any, Callable, Dict, Optional, Type, List, Protocol, TypeVar, Union, runtime_checkable
+from typing import Any, Callable, Dict, Optional, Type, List, TypeVar, Union
 
 UNSET_DEFAULT_RETURN = '__unset_default_return__'
 OCCURRENCE = 1
@@ -12,16 +12,8 @@ logger = logging.getLogger(__name__)
 
 F = TypeVar('F', bound=Callable[..., Any])
 
-
-@runtime_checkable
-class PassThroughHandler(Protocol):
-    def __call__(self, func: F, *args, **kwargs) -> F:
-        return func
-
-
 HandlerFuncType = Union[
     Callable[[Any, ...], Any],
-    PassThroughHandler
 ]
 
 

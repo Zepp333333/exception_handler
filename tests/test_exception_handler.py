@@ -1,6 +1,5 @@
 import logging
 from typing import Callable, Dict, Type
-from unittest import mock
 
 import pytest
 
