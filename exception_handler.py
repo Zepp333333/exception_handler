@@ -1,20 +1,21 @@
 import logging
-import os
 from collections import defaultdict
 from functools import wraps
-from typing import Any, Callable, Dict, Optional, Type, List, TypeVar, Union
+from typing import DefaultDict, Union, ParamSpec, Any, Callable, Dict, Optional, Type, List, TypeVar
 
-UNSET_DEFAULT_RETURN = '__unset_default_return__'
-OCCURRENCE = 1
-MAX_REPEATED_EXCEPTIONS = os.getenv('EXCEPTION_HANDLER_MAX_REPEATED_EXCEPTIONS') or 1
+from read_env import read_env_as_int
+
+DEFAULT_MAX_REPEATED_EXCEPTIONS = 1
+UNSET_DEFAULT_RETURN: str = '__unset_default_return__'
+EXCEPTION_OCCURRENCE: int = 1
+MAX_REPEATED_EXCEPTIONS = (read_env_as_int('EXCEPTION_HANDLER_MAX_REPEATED_EXCEPTIONS')
+                           or DEFAULT_MAX_REPEATED_EXCEPTIONS)
 
 logger = logging.getLogger(__name__)
 
-F = TypeVar('F', bound=Callable[..., Any])
-
-HandlerFuncType = Union[
-    Callable[[Any, ...], Any],
-]
+P = ParamSpec('P')
+T = TypeVar('T')
+HandlerFuncType = Callable[..., Any]
 
 
 class MaxRepeatedExceptionsError(Exception):
@@ -25,9 +26,9 @@ def exception_handler(
     handlers: Dict[Type[Exception], HandlerFuncType],
     default_return: Optional[Any] = UNSET_DEFAULT_RETURN,
     max_repeated_exceptions: int = MAX_REPEATED_EXCEPTIONS,
-    occurred_exceptions: defaultdict[Type[Exception], List[int]] = None
-):
-    def decorate(func: Callable):
+    occurred_exceptions: Optional[DefaultDict[Type[Exception], List[int]]] = None
+) -> Callable[[Callable[P, T]], Callable[P, T]]:
+    def decorate(func: Callable[P, T]) -> Callable[P, T]:
 
         nonlocal max_repeated_exceptions
         nonlocal occurred_exceptions
@@ -36,12 +37,15 @@ def exception_handler(
             occurred_exceptions = defaultdict(list)
 
         @wraps(func)
-        def wrapped(*args, **kwargs):
+        def wrapped(*args: P.args, **kwargs: P.kwargs) -> Union[T, Any]:
             try:
                 return func(*args, **kwargs)
             except Exception as exc:
                 exc_type = type(exc)
-                occurred_exceptions[exc_type].append(OCCURRENCE)
+
+                # per mypy guidance  on optional args https://mypy.readthedocs.io/en/stable/kinds_of_types.html
+                assert occurred_exceptions is not None
+                occurred_exceptions[exc_type].append(EXCEPTION_OCCURRENCE)
 
                 if is_exceeded_max_repeated_exceptions(exc_type, occurred_exceptions, max_repeated_exceptions):
                     raise MaxRepeatedExceptionsError(
@@ -78,7 +82,7 @@ def get_handler_for_exception(
 
 def is_exceeded_max_repeated_exceptions(
     exc: Type[Exception],
-    occurred_exception: defaultdict[Type[Exception], List[int]],
+    occurred_exception: DefaultDict[Type[Exception], List[int]],
     max_repeated_exceptions: int
 ) -> bool:
     return len(occurred_exception.get(exc, [])) == max_repeated_exceptions + 1

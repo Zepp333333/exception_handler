@@ -1,14 +1,15 @@
 import logging
-from typing import Callable, Dict, Type
+from collections import defaultdict
+from typing import Callable, Dict, Type, DefaultDict, List
 
 import pytest
 
-from exception_handler import HandlerFuncType, exception_handler, get_handler_for_exception, MaxRepeatedExceptionsError
+from exception_handler import HandlerFuncType, exception_handler, get_handler_for_exception, MaxRepeatedExceptionsError, \
+    is_exceeded_max_repeated_exceptions
 
 logger = logging.getLogger(__name__)
 
 HANDLED_ATTRIBUTE_ERROR = 'handled_attribute_error'
-HANDLED_VALUE_ERROR = 'handled_value_error'
 HANDLED_LOGGING = 'handled_logging'
 DEFAULT_RETURN = 'default_return'
 
@@ -35,7 +36,7 @@ def logging_handler(func):
 
 
 def retry_handler(func: Callable, *args, **kwargs):
-        return func(*args, **kwargs)
+    return func(*args, **kwargs)
 
 
 test_handlers: Dict[Type[Exception], HandlerFuncType] = {
@@ -127,3 +128,19 @@ def test_exception_handler_two_different_exceptions():
             raise AttributeError
 
     assert func() == HANDLED_ATTRIBUTE_ERROR
+
+
+def test_is_exceeded_max_repeated_exceptions_positive():
+    assert is_exceeded_max_repeated_exceptions(
+        ValueError,
+        defaultdict(list, {ValueError: [1, 1]}),
+        1
+    ) is True
+
+
+def test_is_exceeded_max_repeated_exceptions_negative():
+    assert is_exceeded_max_repeated_exceptions(
+        ValueError,
+        defaultdict(list, {ValueError: [1]}),
+        1
+    ) is False
