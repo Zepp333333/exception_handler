@@ -1,0 +1,4 @@
+[tool.mypy]
+exclude = [
+    'activate_this\.py$'
+]

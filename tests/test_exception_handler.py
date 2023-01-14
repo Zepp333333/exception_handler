@@ -1,6 +1,6 @@
 import logging
 from collections import defaultdict
-from typing import Callable, Dict, Type, DefaultDict, List
+from typing import Callable, Dict, Type
 
 import pytest
 
