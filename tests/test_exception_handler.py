@@ -1,9 +1,8 @@
 from collections import defaultdict
 
 import pytest
-from typing import Dict
 
-from exception_handler import exception_handler, MaxRepeatedExceptionsError
+from exception_handler.exception_handler import exception_handler, MaxRepeatedExceptionsError
 
 
 class TestException(Exception):

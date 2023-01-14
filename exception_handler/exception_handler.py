@@ -3,7 +3,7 @@ from collections import defaultdict
 from functools import wraps
 from typing import DefaultDict, Union, Any, Callable, Dict, Optional, Type, List, TypeVar
 
-from read_env import read_env_as_int
+from exception_handler.read_env import read_env_as_int
 
 DEFAULT_MAX_REPEATED_EXCEPTIONS = 1
 
@@ -13,7 +13,7 @@ MAX_REPEATED_EXCEPTIONS = (read_env_as_int('EXCEPTION_HANDLER_MAX_REPEATED_EXCEP
                            or DEFAULT_MAX_REPEATED_EXCEPTIONS)
 
 T = TypeVar('T')
-HandlerFuncType = Callable[[Callable[..., T], ...], Any]
+HandlerFuncType = Callable[[Callable[..., T], ], Any]
 
 logger = logging.getLogger(__name__)
 
