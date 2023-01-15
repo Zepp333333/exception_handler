@@ -13,7 +13,7 @@ with open(path.join(HERE, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(
-    name="exception_handler",
+    name="exception_handler_plus",
     version="0.1.0",
     description="Simple Exception Handler Decorator",
     long_description=long_description,
@@ -23,7 +23,7 @@ setup(
     author_email='sspytdev@gmail.com',
     license="MIT",
     classifiers=[
-        "Intended Audience :: Developers",  # fixme: check below
+        "Intended Audience :: Developers",
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
@@ -33,7 +33,7 @@ setup(
         "Programming Language :: Python :: 3.11",
         "Operating System :: OS Independent"
     ],
-    packages=["exception_handler"],
+    packages=["exception_handler_plus"],
     include_package_data=True,
     install_requires=[]
 )

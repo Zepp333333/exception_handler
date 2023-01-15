@@ -3,7 +3,7 @@ from collections import defaultdict
 from functools import wraps
 from typing import DefaultDict, Union, Any, Callable, Dict, Optional, Type, List, TypeVar
 
-from exception_handler.read_env import read_env_as_int
+from exception_handler_plus.read_env import read_env_as_int
 
 DEFAULT_MAX_REPEATED_EXCEPTIONS = 1
 

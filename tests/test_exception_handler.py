@@ -2,7 +2,7 @@ from collections import defaultdict
 
 import pytest
 
-from exception_handler.exception_handler import exception_handler, MaxRepeatedExceptionsError
+from exception_handler_plus.exception_handler import exception_handler, MaxRepeatedExceptionsError
 
 
 class TestException(Exception):

@@ -1,6 +1,6 @@
 from unittest import mock
 
-from exception_handler.read_env import read_env_as_int
+from exception_handler_plus.read_env import read_env_as_int
 
 
 @mock.patch('os.getenv', return_value=None)
